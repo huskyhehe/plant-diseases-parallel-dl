@@ -12,7 +12,7 @@ def split_dataset(dataset_path, test_size):
     os.makedirs(train_dir, exist_ok=True)
     os.makedirs(test_dir, exist_ok=True)
 
-    # Create new 'train' and 'test' directories if they don't exist
+    # Create new 'train' and 'test' directorieSets if they don't exist
     os.makedirs(train_dir, exist_ok=True)
     os.makedirs(test_dir, exist_ok=True)
 
@@ -27,8 +27,7 @@ def split_dataset(dataset_path, test_size):
         # List all files under each label in the 'train-old' set
         files = os.listdir(os.path.join(train_old_dir, label))
 
-        # Split files to keep 90% in new 'train' and 10% in new 'test'
-        # Adjust the test_size to 10% of the original dataset, which is 12.5% of the training set
+        # Split files
         train_files, test_files = train_test_split(files, test_size=test_size, random_state=42)
 
         # Copy selected files to the new 'train' and 'test' directories
@@ -57,6 +56,7 @@ def main():
     train_old_count = get_image_count(dataset_path + "/train-old")
     print(f"Train set count before splitting: {train_old_count}")
 
+    # Set the test_size to 10% of the original dataset, which is 12.5% of the training set
     test_size = (1 / 0.8) * 0.1
     split_dataset(dataset_path, test_size)
 
