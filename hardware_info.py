@@ -17,12 +17,12 @@ def display_cpu_info():
     print(f"  Architecture: {info['arch']}")
     print(f"  CPU Count: {info['count']}")
     print(f"  CPU Speed: {info['hz_actual_friendly']}")
-    print(f"   Memory Total: {virtual_memory.total / (1024 ** 3):.2f} GB")
+    print(f"  Memory Total: {virtual_memory.total / (1024 ** 3):.2f} GB")
 
 
 def display_gpu_info():
     gpus = GPUtil.getGPUs()
-    print("\nCPU:")
+    print("\nGPU:")
     print(f"  GPU count: {len(gpus)}")
 
     for gpu in gpus:
