@@ -3,12 +3,10 @@
 #SBATCH --nodes=1 
 #SBATCH --cpus-per-task=4                 
 #SBATCH --mem=16G          
-#SBATCH --time=8:00:00      
-#SBATCH --gres=gpu:p100:4
+#SBATCH --time=8:00:00
 
-
-# Sometimes we cannot get expected gpu, so we use interactive  commands most of time:
-# srun -p courses-gpu --nodes=1 --gres=gpu:p100:4 --cpus-per-task=4 --pty /bin/bash
+# #SBATCH --gres=gpu:p100:2       # when 2 gpus
+#SBATCH --gres=gpu:p100:4         # when 4 gpus
 
 
 module load anaconda3/2022.05 cuda/11.7
