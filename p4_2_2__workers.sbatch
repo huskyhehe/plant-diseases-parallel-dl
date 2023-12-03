@@ -2,7 +2,7 @@
 #SBATCH --partition=courses-gpu
 #SBATCH --nodes=1  
 #SBATCH --cpus-per-task=4                 
-#SBATCH --mem=16G          
+#SBATCH --mem=16G     
 #SBATCH --time=8:00:00            
 #SBATCH --gres=gpu:p100:1
 
@@ -14,14 +14,14 @@ source activate new_env
 
 
 # This is for 0 workers
-# python p4_2_2__dp_main.py --num_nodes 1 --num_workers 0 --num_epochs 5
+# python p4_2_2__workers_main.py --num_nodes 1 --num_workers 0 --num_epochs 5
 
 # This is for 2 workers
-# python p4_2_2__dp_main.py --num_nodes 1 --num_workers 2 --num_epochs 5
+# python p4_2_2__workers_main.py --num_nodes 1 --num_workers 2 --num_epochs 5
 
 # This is for 4 workers
-# python p4_2_2__dp_main.py --num_nodes 1 --num_workers 4 --num_epochs 5
+# python p4_2_2__workers_main.py --num_nodes 1 --num_workers 4 --num_epochs 5
 
 # This is for 8 workers
-python p4_2_2__dp_main.py --num_nodes 1 --num_workers 8 --num_epochs 5
+python p4_2_2__workers_main.py --num_nodes 1 --num_workers 8 --num_epochs 5
 

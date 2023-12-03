@@ -59,7 +59,7 @@ def run(num_nodes, num_workers, num_epochs):
     # Step 3: Define Model----------------------------------------------------------------
     model = PlantResNet18(num_classes, False)
     
-    print(f"Running on {num_gpus} GPU(s) with {n_workers} worker(s)---------------------")
+    print(f"Running on {num_gpus} GPU(s) with {num_workers} worker(s)---------------------")
     model.to(device)
     mode = "workers"
     
@@ -77,7 +77,7 @@ def run(num_nodes, num_workers, num_epochs):
     scheduler =  lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=0.1)
 
     # Create trainer
-    trainer_name = f"workers_{n_workers}__trainer"
+    trainer_name = f"workers_{num_workers}__trainer"
     trainer = PlantTrainer(trainer_name, device, model, train_loader, valid_loader, criterion, optimizer, scheduler, num_epochs)
     
     # Start training
@@ -94,14 +94,14 @@ def run(num_nodes, num_workers, num_epochs):
     # Step 5: Model Evaluation---------------------------------------------------------------
     epoch_list = [i + 1 for i in range(num_epochs)]
     
-    plot_loss_and_acc(mode, num_nodes, epoch_list, trainer.history)
-    plot_time_and_memory_usage(mode, num_nodes, epoch_list, trainer.history)
+    plot_loss_and_acc(mode, num_workers, epoch_list, trainer.history)
+    plot_time_and_memory_usage(mode, num_workers, epoch_list, trainer.history)
 
 
 def main():
     parser = argparse.ArgumentParser(description='Run with multi-process -- workers')
     parser.add_argument('--num_nodes', type=int, default=1, help='Number of nodes (default: 1)')
-    parser.add_argument('--num_workers', type=int, default=4, help='Number of workers (default: 8)')
+    parser.add_argument('--num_workers', type=int, default=4, help='Number of workers (default: 4)')
     parser.add_argument('--num_epochs', type=int, default=5, help='Number of epochs (default: 5)')
     args = parser.parse_args()
 
