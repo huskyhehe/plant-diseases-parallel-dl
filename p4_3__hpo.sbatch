@@ -12,5 +12,5 @@ source activate new_env
 # conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia -y
 # conda install torchsummary
 
-python p4_3_hp_tuning.py --num_nodes 1 --num_workers 4 --num_epochs 5 --n_jobs 4
+python p4_3_hpo_main.py --num_nodes 1 --num_workers 4 --num_epochs 5 --n_jobs 4
 
