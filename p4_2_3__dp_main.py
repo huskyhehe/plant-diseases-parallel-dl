@@ -17,7 +17,6 @@ import matplotlib.pyplot as plt
 import pickle
 
 # Local files imports
-from hardware_info import display_cpu_info, display_gpu_info
 from plant_model import PlantResNet18, PlantTrainer
 from plant_constants import mean, std, num_classes, input_shape, batch_size, train_dir, valid_dir
 from plant_hps import lr_rate, step_size, weight_decay
@@ -26,7 +25,6 @@ from plot_evaluation import plot_loss_and_acc, plot_time_and_memory_usage
 # Main logic
 def run(num_nodes, num_workers, num_epochs):
     # Step 1: Check Hardware Information--------------------------------------------------
-    display_cpu_info()
     # Check gpu
     print("CUDA available" if torch.cuda.is_available() else "CUDA unavailable")
     # Set device
@@ -61,7 +59,7 @@ def run(num_nodes, num_workers, num_epochs):
     model = nn.DataParallel(model)
    
     # Enable DataParallel
-    print(f"Running DataParrallel on {num_gpus} GPUs------------------------------------")
+    print(f"Running DataParallel on {num_gpus} GPU(s)------------------------------------")
     model.to(device)
     mode = "dp"
     
@@ -96,8 +94,8 @@ def run(num_nodes, num_workers, num_epochs):
     # Step 5: Model Evaluation---------------------------------------------------------------
     epoch_list = [i + 1 for i in range(num_epochs)]
     
-    plot_loss_and_acc(mode, num_gpus, epoch_list, trainer.history)
-    plot_time_and_memory_usage(mode, num_gpus, epoch_list, trainer.history)
+    plot_loss_and_acc(mode, num_nodes, epoch_list, trainer.history)
+    plot_time_and_memory_usage(mode, num_nodes, epoch_list, trainer.history)
 
 
 def main():
