@@ -22,7 +22,8 @@ def plot_time_and_speedup(mode: str, num_list, time_list, speedup_list) -> None:
     plt.xticks(num_list, [int(n) for n in num_list])
 
     plt.tight_layout()
-    plt.savefig(f"res/{mode}_perf_time_speedup.png")
+    plt.gcf().set_dpi(600)
+    plt.savefig(f"res/{mode}_effi_time_speedup.png", dpi=600)
     plt.show()
 
 
@@ -36,5 +37,6 @@ def plot_gpu_usage(mode: str, num_list, max_alloc_list) -> None:
     plt.xticks(num_list, [int(n) for n in num_list])
 
     plt.tight_layout()
-    plt.savefig(f"res/{mode}_perf_gpu_mem.png")
+    plt.gcf().set_dpi(600)
+    plt.savefig(f"res/{mode}_effi_gpu_mem.png", dpi=600)
     plt.show()

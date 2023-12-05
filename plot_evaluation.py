@@ -31,7 +31,7 @@ def plot_loss_and_acc(mode: str, num: int, epoch_list, history):
     plt.xticks(epoch_list, [int(epoch) for epoch in epoch_list])
 
     plt.tight_layout()
-    plt.savefig(f"res/{mode}_{num}__learning_curve.png")
+    plt.savefig(f"res/{mode}_{num}__acc_and_loss.png")
     plt.show()
 
 
@@ -58,7 +58,8 @@ def plot_time_and_memory_usage(mode: str, num: int, epoch_list, history):
     plt.xticks(epoch_list, [int(epoch) for epoch in epoch_list])
 
     plt.tight_layout()
-    plt.savefig(f"res/{mode}_{num}__time_and_memory_usage.png")
+    plt.gcf().set_dpi(600)
+    plt.savefig(f"res/{mode}_{num}__time_and_memory_usage.png", dpi=600)
     plt.show()
 
 
@@ -69,5 +70,7 @@ def plot_confusion_matrix(cm, class_names):
     plt.xlabel("Predicted")
     plt.ylabel("True")
 
-    plt.savefig(f"res/confusion_matrix—_{time.time()}.png")
+    plt.tight_layout()
+    plt.gcf().set_dpi(600)
+    plt.savefig(f"res/confusion_matrix—_{time.time()}.png", dpi=600)
     plt.show()
