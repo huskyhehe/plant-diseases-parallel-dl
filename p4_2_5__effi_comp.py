@@ -26,17 +26,16 @@ def workers_comp():
     time_list = [t.total_time for t in trainer_list]
     speedup_list = [time_list[0] / t for t in time_list]
     max_alloc_list = [sum(t.history["max_alloc"]) / len(t.history["max_alloc"]) for t in trainer_list]
-
+    
     plot_time_and_speedup("workers", worker_list, time_list, speedup_list)
     plot_gpu_usage("workers", worker_list, max_alloc_list)
 
 
 def dp_comp():
-    dp_1__trainer = load_file('res/dp_1__trainer.pkl')
     dp_2__trainer = load_file('res/dp_2__trainer.pkl')
     dp_4__trainer = load_file('res/dp_4__trainer.pkl')
 
-    trainer_list = [dp_1__trainer, dp_2__trainer, dp_4__trainer]
+    trainer_list = [workers_0__trainer, dp_2__trainer, dp_4__trainer]
     gpu_list = [1, 2, 4]
     
     time_list = [t.total_time for t in trainer_list]
@@ -67,6 +66,7 @@ def main():
     workers_0__trainer = load_file('res/workers_0__trainer.pkl')
     workers_comp()
     dp_comp()
+    ddp_comp()
 
 
 if __name__ == "__main__":
