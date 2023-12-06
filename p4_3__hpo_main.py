@@ -86,7 +86,6 @@ def main():
     parser.add_argument('--n_jobs', type=int, default=1, help='Number of jobs (default: 1)')
     args = parser.parse_args()
 
-    # multiprocessing.set_start_method('spawn', force=True)
     storage = JournalStorage(JournalFileStorage("./journal.log"))
     
     study = optuna.create_study(direction='maximize', sampler=optuna.samplers.TPESampler(seed=42), storage=storage, load_if_exists=True)
