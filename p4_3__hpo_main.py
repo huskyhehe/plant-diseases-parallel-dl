@@ -20,7 +20,6 @@ import pickle
 # Local files imports
 from plant_model import PlantResNet18, PlantTrainerTuning
 from plant_constants import mean, std, num_classes, input_shape, batch_size, train_dir, valid_dir
-from plot_evaluation import plot_loss_and_acc, plot_time_and_memory_usage
 
 
 def objective(trial, num_workers, num_epochs, n_jobs):
