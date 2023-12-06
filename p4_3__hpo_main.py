@@ -18,7 +18,6 @@ import matplotlib.pyplot as plt
 import pickle
 
 # Local files imports
-from hardware_info import display_cpu_info, display_gpu_info
 from plant_model import PlantResNet18, PlantTrainerTuning
 from plant_constants import mean, std, num_classes, input_shape, batch_size, train_dir, valid_dir
 from plot_evaluation import plot_loss_and_acc, plot_time_and_memory_usage
