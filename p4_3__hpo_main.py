@@ -8,9 +8,10 @@ import torch.nn as nn
 from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
 from torch.optim import lr_scheduler, SGD
-import optuna
 
-from torchsummary import summary
+import optuna
+from optuna.storages import JournalStorage, JournalFileStorage
+
 import time
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,23 +19,17 @@ import pickle
 
 # Local files imports
 from hardware_info import display_cpu_info, display_gpu_info
-from plant_model import PlantResNet18, PlantTrainer
+from plant_model import PlantResNet18, PlantTrainerTuning
 from plant_constants import mean, std, num_classes, input_shape, batch_size, train_dir, valid_dir
 from plot_evaluation import plot_loss_and_acc, plot_time_and_memory_usage
 
-# Main logic
-def objective(trial, num_nodes, num_workers, num_epochs, n_jobs):
-    # Step 1: Check Hardware Information--------------------------------------------------
-    display_cpu_info()
-    # Check gpu
-    print("CUDA available" if torch.cuda.is_available() else "CUDA unavailable")
-    # Set device
+
+def objective(trial, num_workers, num_epochs, n_jobs):
+    print(f"Trial {trial.number} starts--------------------------------------------------")
+    # Step 1: Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    num_gpus = torch.cuda.device_count()
-    
         
     # Step 2: Data Loading----------------------------------------------------------------
-    torch.manual_seed(0)
     # Define data transforms for training, validation, and testing
     def data_loaders(num_workers, batch_size):
         transform = transforms.Compose([
@@ -54,62 +49,63 @@ def objective(trial, num_nodes, num_workers, num_epochs, n_jobs):
     
     train_loader, valid_loader = data_loaders(num_workers, batch_size)
     
-    
     # Step 3: Define Model----------------------------------------------------------------
     model = PlantResNet18(num_classes, False)
     model.to(device)
-    mode = "hpo"
-    
-    
+
     # Step 4: Model Training--------------------------------------------------------------
     # Hyperparameters
     lr_rate = trial.suggest_float('lr_rate', 1e-5, 1e-1, log=True)
-    step_size = trial.suggest_int('step_size', 1, 10)
+    step_size = trial.suggest_int('step_size', 3, 10)
     weight_decay = trial.suggest_float('weight_decay', 1e-6, 1e-2, log=True)
+    momentum = trial.suggest_float('momentum', 0.89, 0.99)
     
     # Loss function
     criterion = nn.CrossEntropyLoss()
     
     # Optimizer
-    optimizer = SGD(model.fc.parameters(), lr=lr_rate, momentum=0.9, weight_decay=weight_decay)
+    optimizer = SGD(model.fc.parameters(), lr=lr_rate, momentum=momentum, weight_decay=weight_decay)
     
     # Learning rate scheduler
     scheduler =  lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=0.1)
 
     # Create trainer
     trainer_name = f"hpo_{n_jobs}__trainer"
-    trainer = PlantTrainer(trainer_name, device, model, train_loader, valid_loader, criterion, optimizer, scheduler, num_epochs)
+    trainer = PlantTrainerTuning(trainer_name, device, model, train_loader, valid_loader, criterion, optimizer, scheduler, num_epochs, trial=trial)
     
     # Start training
     trainer.train_model()
-
-    # Print trainer info
-    trainer.display_info()
-    
-    return -trainer.history["valid_acc"][-1]
+    return trainer.best_valid_acc
 
 
 def print_best_callback(study, trial):
     print(f"Best value: {study.best_value}, Best params: {study.best_trial.params}")
 
-
 def main():
     parser = argparse.ArgumentParser(description='Run hyperparameter tuning')
-    parser.add_argument('--num_nodes', type=int, default=1, help='Number of nodes (default: 1)')
-    parser.add_argument('--num_workers', type=int, default=4, help='Number of workers (default: 4)')
     parser.add_argument('--num_epochs', type=int, default=5, help='Number of epochs (default: 5)')
+    parser.add_argument('--n_trials', type=int, default=10, help='Number of trials (default: 10)')
+    parser.add_argument('--n_jobs', type=int, default=1, help='Number of jobs (default: 1)')
     args = parser.parse_args()
 
-    # Pass the objective function with the additional parameters
-    study = optuna.create_study(direction='maximize') 
-    study.optimize(lambda trial: objective(trial, args.num_nodes, args.num_workers, args.num_epochs), n_trials=20, n_jobs=n_jobs, callbacks=[print_best_callback])
-
+    # multiprocessing.set_start_method('spawn', force=True)
+    storage = JournalStorage(JournalFileStorage("./journal.log"))
+    
+    study = optuna.create_study(direction='maximize', sampler=optuna.samplers.TPESampler(seed=42), storage=storage, load_if_exists=True)
+    sequential_start = time.time()
+    study.optimize(lambda trial: objective(trial, 4, args.num_epochs, args.n_jobs), n_trials=args.n_trials, n_jobs=args.n_jobs, callbacks=[print_best_callback])
+    elapsed_time = time.time() - sequential_start
+    sequential_best_value = study.best_value
+    
     # Get the best hyperparameters
     best_params = study.best_params
-    print("Best Hyperparameters:", best_params)
+    print(f"Elapsed time: {elapsed_time} s")
+    
+    with open(f"res/hpo_time_{args.n_jobs}.pkl", "wb") as file:
+        pickle.dump(elapsed_time, file)
 
     # Store best hyper info
-    with open(f"res/best_params_{n_jobs}.pkl", "wb") as file:
+    with open(f"res/best_hps.pkl", "wb") as file:
         pickle.dump(best_params, file)
 
 
