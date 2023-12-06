@@ -23,7 +23,7 @@ from plant_hps import lr_rate, step_size, weight_decay
 from plot_evaluation import plot_loss_and_acc, plot_time_and_memory_usage
 
 # Main logic
-def run(num_nodes, num_workers, num_epochs):
+def run(num_epochs):
     # Step 1: Check Hardware Information--------------------------------------------------
     # Check gpu
     print("CUDA available" if torch.cuda.is_available() else "CUDA unavailable")
@@ -31,11 +31,14 @@ def run(num_nodes, num_workers, num_epochs):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     num_gpus = torch.cuda.device_count()
     
+    torch.manual_seed(0)
+    torch.cuda.manual_seed_all(0)
+    
         
     # Step 2: Data Loading----------------------------------------------------------------
-    torch.manual_seed(0)
     # Define data transforms for training, validation, and testing
-    def data_loaders(num_workers, batch_size):
+    
+    def data_loaders(batch_size):
         transform = transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize(mean, std)
@@ -46,12 +49,12 @@ def run(num_nodes, num_workers, num_epochs):
         valid_dataset = datasets.ImageFolder(root=valid_dir, transform=transform)
         
         # Create data loaders
-        train_loader = DataLoader(train_dataset, batch_size=batch_size, pin_memory=True, shuffle=True, num_workers=num_workers)
-        valid_loader = DataLoader(valid_dataset, batch_size=batch_size, pin_memory=True, shuffle=False, num_workers=num_workers)
+        train_loader = DataLoader(train_dataset, batch_size=batch_size, pin_memory=True, shuffle=True)
+        valid_loader = DataLoader(valid_dataset, batch_size=batch_size, pin_memory=True, shuffle=False)
         
         return train_loader, valid_loader
     
-    train_loader, valid_loader = data_loaders(num_workers, batch_size)
+    train_loader, valid_loader = data_loaders(batch_size)
     
     
     # Step 3: Define Model----------------------------------------------------------------
@@ -59,9 +62,8 @@ def run(num_nodes, num_workers, num_epochs):
     model = nn.DataParallel(model)
    
     # Enable DataParallel
-    print(f"Running DataParallel on {num_gpus} GPU(s)------------------------------------")
+    print(f"Running DataParrallel on {num_gpus} GPU(s)------------------------------------")
     model.to(device)
-    mode = "dp"
     
     
     # Step 4: Model Training--------------------------------------------------------------
@@ -94,18 +96,16 @@ def run(num_nodes, num_workers, num_epochs):
     # Step 5: Model Evaluation---------------------------------------------------------------
     epoch_list = [i + 1 for i in range(num_epochs)]
     
-    plot_loss_and_acc(mode, num_nodes, epoch_list, trainer.history)
-    plot_time_and_memory_usage(mode, num_nodes, epoch_list, trainer.history)
+    plot_loss_and_acc(trainer_name, epoch_list, trainer.history)
+    plot_time_and_memory_usage(trainer_name, epoch_list, trainer.history)
 
 
 def main():
     parser = argparse.ArgumentParser(description='Run with multi-gpus -- data parallel')
-    parser.add_argument('--num_nodes', type=int, default=1, help='Number of nodes (default: 1)')
-    parser.add_argument('--num_workers', type=int, default=4, help='Number of workers (default: 4)')
     parser.add_argument('--num_epochs', type=int, default=5, help='Number of epochs (default: 5)')
     args = parser.parse_args()
 
-    run(args.num_nodes, args.num_workers, args.num_epochs)
+    run(args.num_epochs)
 
 
 if __name__ == "__main__":

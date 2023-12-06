@@ -24,7 +24,7 @@ from plant_hps import lr_rate, step_size, weight_decay
 from plot_evaluation import plot_loss_and_acc, plot_time_and_memory_usage
 
 # Main logic
-def run(num_nodes, num_workers, num_epochs):
+def run(num_workers, num_epochs):
     # Step 1: Check Hardware Information--------------------------------------------------
     display_cpu_info()
     # Check gpu
@@ -61,7 +61,6 @@ def run(num_nodes, num_workers, num_epochs):
     
     print(f"Running on {num_gpus} GPU(s) with {num_workers} worker(s)---------------------")
     model.to(device)
-    mode = "workers"
     
     
     # Step 4: Model Training--------------------------------------------------------------
@@ -94,14 +93,13 @@ def run(num_nodes, num_workers, num_epochs):
     # Step 5: Model Evaluation---------------------------------------------------------------
     epoch_list = [i + 1 for i in range(num_epochs)]
     
-    plot_loss_and_acc(mode, num_workers, epoch_list, trainer.history)
-    plot_time_and_memory_usage(mode, num_workers, epoch_list, trainer.history)
+    plot_loss_and_acc(trainer_name, epoch_list, trainer.history)
+    plot_time_and_memory_usage(trainer_name, epoch_list, trainer.history)
 
 
 def main():
     parser = argparse.ArgumentParser(description='Run with multi-process -- workers')
-    parser.add_argument('--num_nodes', type=int, default=1, help='Number of nodes (default: 1)')
-    parser.add_argument('--num_workers', type=int, default=4, help='Number of workers (default: 4)')
+    parser.add_argument('--num_workers', type=int, default=0, help='Number of workers (default: 0)')
     parser.add_argument('--num_epochs', type=int, default=5, help='Number of epochs (default: 5)')
     args = parser.parse_args()
 
