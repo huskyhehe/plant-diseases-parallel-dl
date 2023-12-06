@@ -103,7 +103,7 @@ def main():
     parser.add_argument('--num_epochs', type=int, default=5, help='Number of epochs (default: 5)')
     args = parser.parse_args()
 
-    run(args.num_nodes, args.num_workers, args.num_epochs)
+    run(args.num_workers, args.num_epochs)
 
 
 if __name__ == "__main__":
