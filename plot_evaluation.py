@@ -5,7 +5,7 @@ import time
 
         
 # This is the function to plot training, validation loss and accuracy
-def plot_loss_and_acc(mode: str, num: int, epoch_list, history):
+def plot_loss_and_acc(trainer_name, epoch_list, history):
     plt.figure(figsize=(12, 5))
 
     # Plot training and validation loss
@@ -31,12 +31,12 @@ def plot_loss_and_acc(mode: str, num: int, epoch_list, history):
     plt.xticks(epoch_list, [int(epoch) for epoch in epoch_list])
 
     plt.tight_layout()
-    plt.savefig(f"res/{mode}_{num}__acc_and_loss.png")
+    plt.savefig(f"res/{trainer_name}__acc_and_loss.png")
     plt.show()
 
 
 # This is the function to plot time and memory usage
-def plot_time_and_memory_usage(mode: str, num: int, epoch_list, history):
+def plot_time_and_memory_usage(trainer_name, epoch_list, history):
     plt.figure(figsize=(12, 5))
 
     # Plot epoch elapsed time
@@ -59,7 +59,7 @@ def plot_time_and_memory_usage(mode: str, num: int, epoch_list, history):
 
     plt.tight_layout()
     plt.gcf().set_dpi(600)
-    plt.savefig(f"res/{mode}_{num}__time_and_memory_usage.png", dpi=600)
+    plt.savefig(f"res/{trainer_name}__time_and_memory_usage.png", dpi=600)
     plt.show()
 
 
