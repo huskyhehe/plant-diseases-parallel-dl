@@ -1,6 +1,6 @@
 # Team 13
 
-## Project code structure:
+### Project Code Structure
 ```bash
 .
 ├── p3_2__dataset_splitting
@@ -28,6 +28,6 @@
 ├── plant_constants.py
 ├── plant_hps.py
 ├── plant_model.py
-└── plot_comparison.py
+├── plot_comparison.py
 └── plot_evaluation.py
 ```
