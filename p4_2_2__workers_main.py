@@ -58,8 +58,11 @@ def run(num_workers, num_epochs):
     
     # Step 3: Define Model----------------------------------------------------------------
     model = PlantResNet18(num_classes, False)
-    
-    print(f"Running on {num_gpus} GPU(s) with {num_workers} worker(s)---------------------")
+
+    if num_workers == 0:
+        print(f"Running on {num_gpus} GPU with 1 process------------------------------")
+    else:
+        print(f"Running on {num_gpus} GPU with {num_workers} processes------------------------------")
     model.to(device)
     
     
@@ -70,13 +73,13 @@ def run(num_workers, num_epochs):
     criterion = nn.CrossEntropyLoss()
     
     # Optimizer
-    optimizer = SGD(model.fc.parameters(), lr=lr_rate, momentum=0.9, weight_decay=weight_decay)
+    optimizer = SGD(model.fc.parameters(), lr=lr_rate, momentum=momentum, weight_decay=weight_decay)
     
     # Learning rate scheduler
     scheduler =  lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=0.1)
 
     # Create trainer
-    trainer_name = f"workers_{num_workers}__trainer"
+    trainer_name = f"process_{num_workers}__trainer" if num_workers > 0 else "serial_trainer"
     trainer = PlantTrainer(trainer_name, device, model, train_loader, valid_loader, criterion, optimizer, scheduler, num_epochs)
     
     # Start training
