@@ -18,10 +18,10 @@
 │   └── p4_2_3__dp.sbatch
 ├── p4_2_4__ddp_main.py
 │   └── p4_2_4__ddp.sbatch
-├── p4_2_5__time_comp.py
+├── p4_2_5__comp.py
 ├── p4_3__hpo_main.py
-│   ├── p4_3__hpo.ipynb
-│   └── p4_3__time_comp.ipynb
+│   ├── p4_3__hpo_jobs.ipynb
+│   └── p4_3__hpo_comp.ipynb
 ├── p4_4__final_train.ipynb
 │
 ├── hardware_info.py
