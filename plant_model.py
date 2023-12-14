@@ -148,7 +148,6 @@ class PlantTrainer:
             print(f"{k}: {v}")
 
 
-
 class PlantTrainerDistributed(PlantTrainer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -274,7 +273,6 @@ class PlantTrainerTuning(PlantTrainer):
             
             # Set the model to train mode
             self.model.train()
-            scaler = GradScaler()
             # Training loop
             running_loss, running_corrects = self._run_loader(self.train_loader, is_training=True)
 
