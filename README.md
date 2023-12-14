@@ -20,7 +20,7 @@
 │   └── p4_2_4__ddp.sbatch
 ├── p4_2_5__comp.py
 ├── p4_3__hpo_main.py
-│   ├── p4_3__hpo_jobs.ipynb
+│   ├── p4_3__hpo_a100.ipynb
 │   └── p4_3__hpo_comp.ipynb
 ├── p4_4__final_train.ipynb
 │
