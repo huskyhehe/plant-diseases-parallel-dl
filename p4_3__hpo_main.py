@@ -22,7 +22,7 @@ from plant_model import PlantResNet18, PlantTrainerTuning
 from plant_constants import mean, std, num_classes, input_shape, batch_size, train_dir, valid_dir
 
 
-def objective(trial, num_workers, num_epochs, n_jobs):
+def objective(trial, num_workers, num_epochs):
     print(f"Trial {trial.number} starts--------------------------------------------------")
     # Step 1: Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -68,7 +68,7 @@ def objective(trial, num_workers, num_epochs, n_jobs):
     scheduler =  lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=0.1)
 
     # Create trainer
-    trainer_name = f"hpo_{n_jobs}__trainer"
+    trainer_name = f"hpo__trainer"
     trainer = PlantTrainerTuning(trainer_name, device, model, train_loader, valid_loader, criterion, optimizer, scheduler, num_epochs, trial=trial)
     
     # Start training
@@ -79,31 +79,23 @@ def objective(trial, num_workers, num_epochs, n_jobs):
 def print_best_callback(study, trial):
     print(f"Best value: {study.best_value}, Best params: {study.best_trial.params}")
 
+
 def main():
     parser = argparse.ArgumentParser(description='Run hyperparameter tuning')
     parser.add_argument('--num_epochs', type=int, default=5, help='Number of epochs (default: 5)')
     parser.add_argument('--n_trials', type=int, default=10, help='Number of trials (default: 10)')
-    parser.add_argument('--n_jobs', type=int, default=1, help='Number of jobs (default: 1)')
+    parser.add_argument('--tasks', type=int, default=1, help='Number of tasks (default: 1)')
+    # parser.add_argument('--use_process', type=int, default=0, help='if using process (default: 0)')
     args = parser.parse_args()
 
-    storage = JournalStorage(JournalFileStorage("./journal.log"))
-    
-    study = optuna.create_study(direction='maximize', sampler=optuna.samplers.TPESampler(seed=42), storage=storage, load_if_exists=True)
-    sequential_start = time.time()
-    study.optimize(lambda trial: objective(trial, 4, args.num_epochs, args.n_jobs), n_trials=args.n_trials, n_jobs=args.n_jobs, callbacks=[print_best_callback])
-    elapsed_time = time.time() - sequential_start
-    sequential_best_value = study.best_value
-    
-    # Get the best hyperparameters
-    best_params = study.best_params
+    storage = JournalStorage(JournalFileStorage("./journal_default.log"))
+    start_time = time.time()
+    study = optuna.create_study(direction='maximize', study_name="hpo_default", sampler=optuna.samplers.TPESampler(seed=42), storage=storage, load_if_exists=True)
+    study.optimize(lambda trial: objective(trial, 0, args.num_epochs), n_trials=args.n_trials, n_jobs=args.tasks, callbacks=[print_best_callback])
+    elapsed_time = time.time() - start_time
     print(f"Elapsed time: {elapsed_time} s")
-    
-    with open(f"res/hpo_time_{args.n_jobs}.pkl", "wb") as file:
+    with open(f"res/hpo_time_{args.tasks}.pkl", "wb") as file:
         pickle.dump(elapsed_time, file)
-
-    # Store best hyper info
-    with open(f"res/best_hps.pkl", "wb") as file:
-        pickle.dump(best_params, file)
 
 
 if __name__ == "__main__":

@@ -4,8 +4,8 @@ from torchvision import datasets, models
 import torch.distributed as dist
 from torch.utils.data.distributed import DistributedSampler
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-import ray
 import time
+import optuna
 
 
 # This is the model class based on ResNet18
@@ -148,7 +148,6 @@ class PlantTrainer:
             print(f"{k}: {v}")
 
 
-
 class PlantTrainerDistributed(PlantTrainer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -160,7 +159,6 @@ class PlantTrainerDistributed(PlantTrainer):
         # Train the model for the specified number of epochs
         for epoch in range(self.num_epochs):
 
-            # Calling the set_epoch()####################
             self.train_loader.sampler.set_epoch(epoch)
             self.valid_loader.sampler.set_epoch(epoch)
             
@@ -215,7 +213,6 @@ class PlantTrainerDistributed(PlantTrainer):
 
         self.total_time = time.time() - start_time
 
-
         
     def _run_loader(self, loader, is_training):
         running_loss = 0.0
@@ -259,7 +256,6 @@ class PlantTrainerDistributed(PlantTrainer):
 
         # return running_loss, running_corrects
         return avg_loss, local_correct
-
 
 
 class PlantTrainerTuning(PlantTrainer):
@@ -309,6 +305,7 @@ class PlantTrainerTuning(PlantTrainer):
                 
             self.scheduler.step()
 
+            # When compare the elapsed time, this pruned block will be commented
             if self.trial:
                 self.trial.report(valid_acc, epoch)
                 if self.trial.should_prune():

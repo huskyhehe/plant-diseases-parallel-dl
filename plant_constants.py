@@ -1,3 +1,4 @@
+base = "/home/zhou.he1/final/"
 dataset_path = "new-plant-diseases-dataset"
 train_dir = dataset_path + "/train"
 valid_dir = dataset_path + "/valid"
