@@ -76,7 +76,6 @@ def run(rank: int, world_size: int, num_epochs: int):
         
         # Create data loaders
         train_loader = DataLoader(train_dataset, batch_size=batch_size, pin_memory=True, sampler=train_sampler)
-        # train_loader = DataLoader(train_dataset, batch_size=batch_size, pin_memory=True, shuffle=True, num_workers=num_workers)
         valid_loader = DataLoader(valid_dataset, batch_size=batch_size, pin_memory=True)
         
         return train_loader, valid_loader
