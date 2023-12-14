@@ -10,7 +10,6 @@ from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
 from torch.optim import lr_scheduler, SGD
 
-from torchsummary import summary
 import time
 import numpy as np
 import matplotlib.pyplot as plt

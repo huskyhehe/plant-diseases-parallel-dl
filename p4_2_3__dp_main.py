@@ -10,7 +10,6 @@ from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
 from torch.optim import lr_scheduler, SGD
 
-from torchsummary import summary
 import time
 import numpy as np
 import matplotlib.pyplot as plt
@@ -62,7 +61,7 @@ def run(num_epochs):
     model = nn.DataParallel(model)
    
     # Enable DataParallel
-    print(f"Running DataParrallel on {num_gpus} GPU(s)------------------------------------")
+    print(f"Running DataParrallel on {num_gpus} GPUs------------------------------------------")
     model.to(device)
     
     
@@ -73,7 +72,7 @@ def run(num_epochs):
     criterion = nn.CrossEntropyLoss()
     
     # Optimizer for DataParralel
-    optimizer = SGD(model.module.fc.parameters(), lr=lr_rate, momentum=0.9, weight_decay=weight_decay)
+    optimizer = SGD(model.module.fc.parameters(), lr=lr_rate, momentum=momentum, weight_decay=weight_decay)
     
     # Learning rate scheduler
     scheduler =  lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=0.1)
