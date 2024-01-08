@@ -1,4 +1,4 @@
-# A Comparative Study of Parallel Deep Learning Plant Diseases Health
+# A Comparative Study of Parallel Deep Learning for Plant Diseases Classification
 ### Report
 - Please check the report [here](docs/report.pdf)
 - Please check the presentation slides [here](docs/presentation.pdf)
