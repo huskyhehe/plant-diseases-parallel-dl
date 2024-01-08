@@ -1,4 +1,4 @@
-# Team 13 Project
+# A Comparative Study of Parallel Deep Learning Plant Diseases Health
 ### Report
 - Please check the report [here](docs/report.pdf)
 - Please check the presentation slides [here](docs/presentation.pdf)
