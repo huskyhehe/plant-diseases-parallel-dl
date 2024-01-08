@@ -1,6 +1,9 @@
-# Team 13
+# Team 13 Project
+### Report
+- Please check the report [here](docs/report.pdf)
+- Please check the presentation slides [here](docs/presentation.pdf)
 
-### Project Code Structure
+### Code Structure
 ```bash
 .
 ├── p3_2__dataset_splitting
